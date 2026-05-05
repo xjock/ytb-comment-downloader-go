@@ -3,6 +3,7 @@
 /ytb-comment-downloader-*
 /dist/
 /bin/
+ytb-comment-downloader-go
 
 # Test artifacts
 *.test
@@ -24,3 +25,4 @@ Thumbs.db
 # Output files (downloaded comments)
 *.json
 !testdata/*.json
+comments/
