@@ -1,0 +1,10 @@
+.git
+.gitignore
+.claude
+.idea
+.vscode
+dist
+*.json
+*.md
+!go.mod
+ytb-comment-downloader

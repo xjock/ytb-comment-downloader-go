@@ -1,0 +1,26 @@
+# Binaries
+/ytb-comment-downloader
+/ytb-comment-downloader-*
+/dist/
+/bin/
+
+# Test artifacts
+*.test
+*.out
+coverage.txt
+coverage.html
+
+# IDE
+.idea/
+.vscode/
+.claude/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output files (downloaded comments)
+*.json
+!testdata/*.json
