@@ -8,6 +8,7 @@ BUILDFLAGS  := -trimpath -ldflags="-s -w"
 
 .PHONY: all build test vet fmt run serve clean dist \
         build-linux-amd64 build-linux-arm64 build-darwin-arm64 build-darwin-amd64 \
+        build-windows-amd64 build-windows-arm64 \
         docker docker-push tidy
 
 all: vet test build
@@ -39,26 +40,37 @@ clean:
 
 # ---- Cross-compilation -----------------------------------------------------
 
-dist: build-linux-amd64 build-linux-arm64 build-darwin-arm64 build-darwin-amd64
+dist: build-linux-amd64 build-linux-arm64 build-darwin-arm64 build-darwin-amd64 build-windows-amd64 build-windows-arm64
 
-$(DIST):
+build-linux-amd64:
 	mkdir -p $(DIST)
-
-build-linux-amd64: | $(DIST)
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 		$(GO) build $(BUILDFLAGS) -o $(DIST)/$(BINARY)-linux-amd64 .
 
-build-linux-arm64: | $(DIST)
+build-linux-arm64:
+	mkdir -p $(DIST)
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 \
 		$(GO) build $(BUILDFLAGS) -o $(DIST)/$(BINARY)-linux-arm64 .
 
-build-darwin-arm64: | $(DIST)
+build-darwin-arm64:
+	mkdir -p $(DIST)
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 \
 		$(GO) build $(BUILDFLAGS) -o $(DIST)/$(BINARY)-darwin-arm64 .
 
-build-darwin-amd64: | $(DIST)
+build-darwin-amd64:
+	mkdir -p $(DIST)
 	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
 		$(GO) build $(BUILDFLAGS) -o $(DIST)/$(BINARY)-darwin-amd64 .
+
+build-windows-amd64:
+	mkdir -p $(DIST)
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
+		$(GO) build $(BUILDFLAGS) -o $(DIST)/$(BINARY)-windows-amd64.exe .
+
+build-windows-arm64:
+	mkdir -p $(DIST)
+	CGO_ENABLED=0 GOOS=windows GOARCH=arm64 \
+		$(GO) build $(BUILDFLAGS) -o $(DIST)/$(BINARY)-windows-arm64.exe .
 
 # ---- Docker ---------------------------------------------------------------
 

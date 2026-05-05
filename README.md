@@ -29,6 +29,10 @@ Cross-compile for all supported targets into `./dist/`:
 make dist
 ```
 
+Windows binaries are also included (`make build-windows-amd64` / `build-windows-arm64`).
+The project only uses Go's standard library, so cross-compilation is fully supported
+out of the box — no cgo or native toolchains required.
+
 ## CLI
 
 ```
