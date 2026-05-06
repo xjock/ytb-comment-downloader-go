@@ -2,9 +2,10 @@ BINARY      := ytb-comment-downloader
 PKG         := github.com/luca/ytb-comment-downloader-go
 DIST        := dist
 DOCKER_TAG  ?= ytb-comment-downloader:latest
+VERSION     ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
 GO          ?= go
-BUILDFLAGS  := -trimpath -ldflags="-s -w"
+BUILDFLAGS  := -trimpath -ldflags="-s -w -X main.version=$(VERSION)"
 
 .PHONY: all build test vet fmt run serve clean dist \
         build-linux-amd64 build-linux-arm64 build-darwin-arm64 build-darwin-amd64 \

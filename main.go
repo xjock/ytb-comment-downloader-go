@@ -20,6 +20,9 @@ import (
 
 const indentWidth = 4
 
+// version is injected at build time via -ldflags.
+var version = "dev"
+
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == "serve" {
 		os.Exit(runServe(os.Args[2:]))
@@ -43,6 +46,7 @@ Flags:
   --limit, -l N            Maximum number of comments to download
   --language, -a CODE      UI language for relative timestamps (e.g. en, de)
   --sort, -s 0|1           0 = popular, 1 = recent (default 1)
+  --version, -v            Print version and exit
   --help, -h               Show this help
 
 Run "ytb-comment-downloader serve --help" for HTTP server flags.`)
@@ -50,11 +54,13 @@ Run "ytb-comment-downloader serve --help" for HTTP server flags.`)
 
 	var (
 		youtubeID, url, output, language string
-		pretty                           bool
+		pretty, showVersion              bool
 		limit                            int
 		sort                             = downloader.SortByRecent
 	)
 
+	fs.BoolVar(&showVersion, "version", false, "Print version and exit")
+	fs.BoolVar(&showVersion, "v", false, "Print version and exit (short)")
 	fs.StringVar(&youtubeID, "youtubeid", "", "YouTube video ID")
 	fs.StringVar(&youtubeID, "y", "", "YouTube video ID (short)")
 	fs.StringVar(&url, "url", "", "YouTube video URL")
@@ -75,6 +81,10 @@ Run "ytb-comment-downloader serve --help" for HTTP server flags.`)
 			return 0
 		}
 		return 2
+	}
+	if showVersion {
+		fmt.Println(version)
+		return 0
 	}
 
 	if (youtubeID == "" && url == "") || output == "" {
