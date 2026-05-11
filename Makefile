@@ -1,5 +1,5 @@
 BINARY      := ytb-comment-downloader
-PKG         := github.com/luca/ytb-comment-downloader-go
+PKG         := github.com/xjock/ytb-comment-downloader-go
 DIST        := dist
 DOCKER_TAG  ?= ytb-comment-downloader:latest
 VERSION     ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)

@@ -1,3 +1,3 @@
-module github.com/luca/ytb-comment-downloader-go
+module github.com/xjock/ytb-comment-downloader-go
 
 go 1.26

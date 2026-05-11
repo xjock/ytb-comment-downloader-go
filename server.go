@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/luca/ytb-comment-downloader-go/downloader"
+	"github.com/xjock/ytb-comment-downloader-go/downloader"
 )
 
 func runServe(args []string) int {

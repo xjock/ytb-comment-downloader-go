@@ -12,13 +12,13 @@ HTTP service.
 Build from source (requires Go 1.26+):
 
 ```sh
-go install github.com/luca/ytb-comment-downloader-go@latest
+go install github.com/xjock/ytb-comment-downloader-go@latest
 ```
 
 Or clone and build with `make`:
 
 ```sh
-git clone https://github.com/luca/ytb-comment-downloader-go.git
+git clone https://github.com/xjock/ytb-comment-downloader-go.git
 cd ytb-comment-downloader-go
 make build
 ```
@@ -177,7 +177,7 @@ import (
     "context"
     "fmt"
 
-    "github.com/luca/ytb-comment-downloader-go/downloader"
+    "github.com/xjock/ytb-comment-downloader-go/downloader"
 )
 
 func main() {
