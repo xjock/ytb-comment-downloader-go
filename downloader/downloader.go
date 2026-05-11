@@ -186,7 +186,11 @@ func (d *Downloader) run(ctx context.Context, youtubeURL string, opts Options, y
 		return
 	}
 
-	chosen, _ := mapPath[any](sortMenu[opts.SortBy], "serviceEndpoint")
+	chosen, ok := mapPath[any](sortMenu[opts.SortBy], "serviceEndpoint")
+	if !ok {
+		yield(Comment{}, ErrSortFailed)
+		return
+	}
 	continuations := []any{chosen}
 
 	for len(continuations) > 0 {
@@ -342,11 +346,20 @@ func (d *Downloader) handleConsent(ctx context.Context, youtubeURL, html string)
 func (d *Downloader) ajaxRequest(ctx context.Context, endpoint, ytcfg any) (map[string]any, error) {
 	apiURL, ok := mapPath[string](endpoint, "commandMetadata", "webCommandMetadata", "apiUrl")
 	if !ok {
-		return nil, errors.New("downloader: continuation endpoint missing apiUrl")
+		// YouTube sometimes omits apiUrl; fall back to url field or the
+		// standard comments endpoint.
+		apiURL, ok = mapPath[string](endpoint, "commandMetadata", "webCommandMetadata", "url")
+		if !ok {
+			apiURL = "/youtubei/v1/next"
+		}
 	}
 	token, ok := mapPath[string](endpoint, "continuationCommand", "token")
 	if !ok {
-		return nil, errors.New("downloader: continuation endpoint missing token")
+		// Some endpoints place the token directly on the endpoint object.
+		token, ok = mapPath[string](endpoint, "token")
+		if !ok {
+			return nil, errors.New("downloader: continuation endpoint missing token")
+		}
 	}
 
 	innerCtx, _ := mapPath[any](ytcfg, "INNERTUBE_CONTEXT")
@@ -431,21 +444,24 @@ func decodeJSONMatch(re *regexp.Regexp, text string) (map[string]any, error) {
 }
 
 func extractSortMenu(data any) []map[string]any {
-	root, ok := SearchDictFirst(data, "sortFilterSubMenuRenderer")
-	if !ok {
-		return nil
-	}
-	items, ok := mapPath[[]any](root, "subMenuItems")
-	if !ok {
-		return nil
-	}
-	out := make([]map[string]any, 0, len(items))
-	for _, it := range items {
-		if m, ok := it.(map[string]any); ok {
-			out = append(out, m)
+	for root := range SearchDict(data, "sortFilterSubMenuRenderer") {
+		items, ok := mapPath[[]any](root, "subMenuItems")
+		if !ok {
+			continue
+		}
+		out := make([]map[string]any, 0, len(items))
+		for _, it := range items {
+			if m, ok := it.(map[string]any); ok {
+				if _, hasSE := m["serviceEndpoint"]; hasSE {
+					out = append(out, m)
+				}
+			}
+		}
+		if len(out) > 0 {
+			return out
 		}
 	}
-	return out
+	return nil
 }
 
 func extractPayments(response any) map[string]string {
